@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.insa.mygameslist.R
+import java.util.HashMap
 
 object IGDB {
 
@@ -12,6 +13,8 @@ object IGDB {
     lateinit var genres: Map<Long,Genre>
     lateinit var platformLogos : Map<Long,PlatformLogo>
     lateinit var platforms : Map<Long,Platform>
+
+    lateinit var favoris : Map<Long,Boolean>
 
     fun load(context: Context) {
         val coversFromJson: List<Cover> = Gson().fromJson(
@@ -39,11 +42,13 @@ object IGDB {
             object : TypeToken<List<Platform>>() {}.type
         )
 
-        covers = coversFromJson.associateBy{it.id}
-        games = gamesFromJson.associateBy{it.id}
+        covers = coversFromJson.associateBy{ it.id }
+        games = gamesFromJson.associateBy{ it.id }
         genres = genresFromJson.associateBy { it.id }
         platformLogos = platformLogosFromJson.associateBy { it.id }
         platforms = platformsFromJson.associateBy { it.id }
+
+        favoris = games.keys.associateWith { false }.toMutableMap()
     }
 }
 

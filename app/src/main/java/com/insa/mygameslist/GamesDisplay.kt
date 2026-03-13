@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -38,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -165,7 +168,7 @@ fun GameCell(jeu: Game, data: IGDB){
                 .clip(RoundedCornerShape(10.dp))
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = jeu.name,
                 style = MaterialTheme.typography.titleMedium,
@@ -183,6 +186,26 @@ fun GameCell(jeu: Game, data: IGDB){
                 overflow = TextOverflow.Ellipsis
             )
         }
+        Box(
+            modifier = Modifier.width(50.dp).height(70.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if(data.favoris[jeu.id] == false) {
+                Icon(
+                    painter = painterResource(R.drawable.etoile_vide),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(32.dp)
+                )
+            }else{
+                Icon(
+                    painter = painterResource(R.drawable.etoile_pleine),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
     }
 }
 
@@ -192,15 +215,31 @@ fun GameListContent(
     data: IGDB,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(176, 184, 62)),
-    ) {
-        items(games) { jeu ->
-            Spacer(modifier = Modifier.height(4.dp))
-            GameCell(jeu = jeu, data = data)
-            Spacer(modifier = Modifier.height(4.dp))
+    if (games.isEmpty()) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(176, 184, 62)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No match :(",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color(58, 86, 22),
+                fontWeight = FontWeight.Bold
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(176, 184, 62)),
+        ) {
+            items(games) { jeu ->
+                Spacer(modifier = Modifier.height(4.dp))
+                GameCell(jeu = jeu, data = data)
+                Spacer(modifier = Modifier.height(4.dp))
+            }
         }
     }
 }
