@@ -1,5 +1,6 @@
 package com.insa.mygameslist
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -55,7 +57,8 @@ fun GameDetails(jeu: Game, data: IGDB){
     val genres = jeu.genres.mapNotNull { data.genres[it]?.name }
     val platformLogosIds = jeu.platforms.mapNotNull { data.platforms[it]?.platform_logo }
     val platformLogosUrls = platformLogosIds.mapNotNull { data.platformLogos[it]?.url }
-
+    val isFavori = data.favoris[jeu.id] ?: false
+    val resource = if (isFavori) R.drawable.etoile_pleine else R.drawable.etoile_vide
     Scaffold(
         topBar = {
             TopAppBar(
@@ -83,14 +86,33 @@ fun GameDetails(jeu: Game, data: IGDB){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    text = jeu.name,
-                    style = TextStyle(Color.Black,fontSize=24.sp),
-                    fontWeight = FontWeight.Bold,
-                    textDecoration = TextDecoration.Underline,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Row(){
+                    Text(
+                        text = jeu.name,
+                        style = TextStyle(Color.Black,fontSize=24.sp),
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(modifier = Modifier.width(30.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(32.dp)
+                            .height(32.dp)
+                            .clickable{
+                                data.favoris[jeu.id] = !isFavori
+                            },
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Icon(
+                            painter = painterResource(resource),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(30.dp))
                 AsyncImage(
                     model = cover?.let { "https:$it" },

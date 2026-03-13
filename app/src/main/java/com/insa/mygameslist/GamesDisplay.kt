@@ -153,6 +153,8 @@ fun ListGameCell(data: IGDB, viewModel: GameViewModel = viewModel { GameViewMode
 fun GameCell(jeu: Game, data: IGDB){
     val cover = data.covers[jeu.cover]?.url
     val genres = jeu.genres.mapNotNull { data.genres[it]?.name }
+    val isFavori = data.favoris[jeu.id] ?: false
+    val resource = if (isFavori) R.drawable.etoile_pleine else R.drawable.etoile_vide
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -187,27 +189,24 @@ fun GameCell(jeu: Game, data: IGDB){
             )
         }
         Box(
-            modifier = Modifier.width(50.dp).height(70.dp),
+            modifier = Modifier
+                .width(50.dp)
+                .height(70.dp)
+                .clickable{
+                    data.favoris[jeu.id] = !isFavori
+                },
             contentAlignment = Alignment.Center
         ) {
-            if(data.favoris[jeu.id] == false) {
-                Icon(
-                    painter = painterResource(R.drawable.etoile_vide),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(32.dp)
-                )
-            }else{
-                Icon(
-                    painter = painterResource(R.drawable.etoile_pleine),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+            Icon(
+                painter = painterResource(resource),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(32.dp)
+            )
         }
+      }
     }
-}
+
 
 @Composable
 fun GameListContent(
